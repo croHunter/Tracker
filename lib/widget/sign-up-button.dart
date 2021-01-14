@@ -14,7 +14,7 @@ class SignUpButton extends CustomRaisedButton {
           child: Text(text,
               style: TextStyle(
                 color: textColor,
-                fontSize: 24,
+                fontSize: 20,
               )),
           color: color,
           onPressed: onPressed,

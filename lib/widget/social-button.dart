@@ -22,7 +22,7 @@ class SocialButton extends CustomRaisedButton {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Image.asset(assetName),
-                Text(text, style: TextStyle(color: textColor, fontSize: 24)),
+                Text(text, style: TextStyle(color: textColor, fontSize: 20)),
                 Opacity(opacity: 0, child: Image.asset(assetName)),
               ]),
           padding: padding,

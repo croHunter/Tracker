@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:time_tracker/services/auth.dart';
 import 'email-signin-form.dart';
 
 class SignInPage extends StatelessWidget {
-  SignInPage({@required this.auth});
-  final AuthBase auth;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +19,7 @@ class SignInPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-          child: EmailSignInForm(
-            auth: auth,
-          ),
+          child: EmailSignInForm(),
         ),
       ),
     );

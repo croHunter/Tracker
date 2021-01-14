@@ -26,6 +26,7 @@ class CustomRaisedButton extends StatelessWidget {
       ),
       child: child,
       onPressed: onPressed,
+      disabledColor: color,
     );
   }
 }

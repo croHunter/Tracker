@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomAvatar extends StatelessWidget {
-  const CustomAvatar({
-    Key key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,8 +16,8 @@ class CustomAvatar extends StatelessWidget {
           ),
         ),
         child: Container(
-          height: 150.0,
-          width: 150.0,
+          height: 125.0,
+          width: 125.0,
           foregroundDecoration: BoxDecoration(
             shape: BoxShape.circle,
             backgroundBlendMode: BlendMode.exclusion,

@@ -1,16 +1,16 @@
-import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker/auth-page/validator.dart';
 import 'package:time_tracker/services/auth.dart';
 import 'package:time_tracker/widget/custom-avatar.dart';
-import 'package:time_tracker/widget/platform-aware-dialog.dart';
+import 'package:time_tracker/widget/platform-exception-aware-dialog.dart';
 import 'package:time_tracker/widget/sign-up-button.dart';
 
 enum EmailSignInFormType { signIn, register }
 
 class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidator {
-  EmailSignInForm({@required this.auth});
-  final AuthBase auth;
   @override
   _EmailSignInFormState createState() => _EmailSignInFormState();
 }
@@ -21,10 +21,10 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   bool _isLoading = false;
 
   EmailSignInFormType _formType = EmailSignInFormType.signIn;
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  String get _email => emailController.text;
-  String get _password => passwordController.text;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  String get _email => _emailController.text;
+  String get _password => _passwordController.text;
 
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
@@ -39,38 +39,24 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       _submitted = true;
       _isLoading = true;
     });
-    if (_formType == EmailSignInFormType.signIn) {
-      try {
-        await widget.auth.signInWithEmail(_email, _password);
-        Navigator.of(context).pop();
-      } catch (e) {
-        debugPrint("signin error : ${e.toString()}");
-        PlatformAwareDialog(
-          title: "Sign in failed",
-          content: "${e.toString()}",
-          defaultActionText: "Ok",
-        ).show(context);
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
+    try {
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      if (_formType == EmailSignInFormType.signIn) {
+        await auth.signInWithEmail(_email, _password);
+      } else {
+        await auth.createUserWithEmail(_email, _password);
       }
-    } else {
-      try {
-        await widget.auth.createUserWithEmail(_email, _password);
-        Navigator.of(context).pop();
-      } catch (e) {
-        debugPrint("singUp error : ${e.toString()}");
-        PlatformAwareDialog(
-          title: "Sign in failed",
-          content: "${e.toString()}",
-          defaultActionText: "Ok",
-        ).show(context);
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      Navigator.of(context).pop();
+    } on FirebaseAuthException catch (e) {
+      debugPrint("FirebaseAuthException :" + e.toString());
+      PlatformExceptionAwareDialog(
+        title: "Sign in failed",
+        firebaseAuthException: e,
+      ).show(context);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -88,8 +74,8 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
           ? EmailSignInFormType.register
           : EmailSignInFormType.signIn;
     });
-    emailController.clear();
-    passwordController.clear();
+    _emailController.clear();
+    _passwordController.clear();
   }
 
   List<Widget> _buildChildren() {
@@ -127,6 +113,15 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   }
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +134,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     bool showEmailError = _submitted &&
         !widget.emailValidator.isValid(_email); //submitted but not valid
     return TextFormField(
-      controller: emailController,
+      controller: _emailController,
       focusNode: _emailFocusNode,
       autocorrect: false,
       textInputAction: TextInputAction.next,
@@ -149,7 +144,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         _updateState();
       },
       style: new TextStyle(
-        fontSize: 24.0,
+        fontSize: 16.0,
         color: Colors.white,
         fontFamily: "Poppins",
       ),
@@ -163,13 +158,13 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         // counterText: "Fill required",
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.redAccent, width: 3),
+          borderSide: BorderSide(color: Colors.redAccent, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
             color: Colors.teal,
-            width: 3,
+            width: 1.5,
           ),
         ),
       ),
@@ -180,7 +175,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     bool showPasswordError =
         _submitted && !widget.passwordValidator.isValid(_password);
     return TextFormField(
-      controller: passwordController,
+      controller: _passwordController,
       focusNode: _passwordFocusNode,
       keyboardType: TextInputType.visiblePassword,
       textInputAction: TextInputAction.done,
@@ -190,7 +185,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         _updateState();
       },
       style: new TextStyle(
-        fontSize: 24.0,
+        fontSize: 16.0,
         color: Colors.white,
         fontFamily: "Poppins",
       ),
@@ -203,7 +198,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
             },
             child: Icon(
               _isVisible ? Icons.visibility : Icons.visibility_off,
-              size: 24,
+              size: 16,
               color: Colors.white,
             ),
           ),
@@ -214,11 +209,11 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
           // counterText: "Fill required",
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.redAccent, width: 3),
+            borderSide: BorderSide(color: Colors.redAccent, width: 1.5),
           ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.teal, width: 3))),
+              borderSide: BorderSide(color: Colors.teal, width: 1.5))),
     );
   }
 

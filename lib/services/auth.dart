@@ -72,15 +72,43 @@ class Auth implements AuthBase {
 
   @override
   Future<FireUser> signInWithFacebook() async {
+    FireUser resultAuth;
     final facebookSignIn = FacebookLogin();
-    final result = await facebookSignIn.logIn(['email']);
-    print('sujan1 ${result.accessToken.token}');
+    facebookSignIn.loginBehavior = FacebookLoginBehavior.webViewOnly;
+    final result = await facebookSignIn.logIn(['email', 'public_profile']);
+    switch (result.status) {
+      case FacebookLoginStatus.cancelledByUser:
+        print("cancel by user");
+        print(result.errorMessage);
+        throw PlatformException(
+          code: 'ERROR_ABORTED_BY_USER',
+          message: 'Sign in aborted by user',
+        );
+        break;
+      case FacebookLoginStatus.error:
+        print("error");
+        print(result.errorMessage);
+        throw PlatformException(
+          code: 'ERROR FB LOGIN',
+          message: 'There is some problem',
+        );
+        break;
+      case FacebookLoginStatus.loggedIn:
+        resultAuth = await _handleFbSignIn(result);
+        return resultAuth;
+      default:
+        print("switch default is excuted in fb login section");
+    }
+    return resultAuth;
+  }
+
+  Future<FireUser> _handleFbSignIn(FacebookLoginResult result) async {
     if (result.accessToken != null) {
       final authResult = await _auth.signInWithCredential(
           FacebookAuthProvider.credential(result.accessToken.token));
-      print('sujan2 ${authResult.user}');
       return _userFromFirebase(authResult.user);
     } else {
+      print("null case: " + result.errorMessage);
       throw PlatformException(
         code: 'ERROR_ABORTED_BY_USER',
         message: 'Sign in aborted by user',
