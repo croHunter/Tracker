@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'email-signin-form.dart';
+import 'email-signin-form-bloc-based.dart';
 
 class SignInPage extends StatelessWidget {
   @override
@@ -19,7 +19,7 @@ class SignInPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-          child: EmailSignInForm(),
+          child: EmailSignInFormBlocBased.create(context),
         ),
       ),
     );
