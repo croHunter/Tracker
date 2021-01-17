@@ -27,14 +27,30 @@ class EmailSignInBloc {
       // Navigator.of(context).pop();
     } catch (e) {
       debugPrint("FirebaseAuthException :" + e.toString());
+      updateWith(isLoading: false);
       rethrow;
       // PlatformExceptionAwareDialog(
       //   title: "Sign in failed",
       //   firebaseAuthException: e,
       // ).show(context);
-    } finally {
-      updateWith(isLoading: false);
     }
+  }
+
+  void updateEmail(email) => updateWith(email: email);
+  void updatePassword(password) => updateWith(password: password);
+
+  void toggleFormType() {
+    final formType = _model.formType == EmailSignInFormType.signIn
+        ? EmailSignInFormType.register
+        : EmailSignInFormType.signIn;
+    updateWith(
+      submitted: false,
+      formType: formType,
+      email: '',
+      password: '',
+      isLoading: false,
+      isVisible: false,
+    );
   }
 
   void updateWith({

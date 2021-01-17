@@ -1,6 +1,8 @@
+import 'package:time_tracker/auth-page/validator.dart';
+
 enum EmailSignInFormType { signIn, register }
 
-class EmailSignInModel {
+class EmailSignInModel with EmailAndPasswordValidator {
   final String email;
   final String password;
   final EmailSignInFormType formType;
@@ -32,5 +34,35 @@ class EmailSignInModel {
       submitted: submitted ?? this.submitted,
       isVisible: isVisible ?? this.isVisible,
     );
+  }
+
+  String get primaryButtonText {
+    return formType == EmailSignInFormType.signIn
+        ? "Sign in"
+        : "Create an account";
+  }
+
+  String get secondaryButtonText {
+    return formType == EmailSignInFormType.signIn
+        ? "Need an account? Register"
+        : "Have an account? Sign in";
+  }
+
+  bool get canSubmit {
+    return emailValidator.isValid(email) &&
+        passwordValidator.isValid(password) &&
+        !isLoading;
+  }
+
+  String get emailErrorText {
+    bool showEmailError =
+        submitted && !emailValidator.isValid(email); //submitted but not valid
+    return showEmailError ? invalidEmailErrorText : null;
+  }
+
+  String get passwordErrorText {
+    bool showPasswordError = submitted &&
+        !emailValidator.isValid(password); //submitted but not valid
+    return showPasswordError ? invalidPasswordErrorText : null;
   }
 }
