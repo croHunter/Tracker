@@ -17,6 +17,8 @@ class EmailSignInModel with EmailAndPasswordValidator {
     this.submitted = false,
     this.isVisible = false,
   });
+
+  get updatePassword => null;
 //Named Constructor//?????????????????
   EmailSignInModel copyWith({
     String email,
