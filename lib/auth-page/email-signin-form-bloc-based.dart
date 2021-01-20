@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:time_tracker/auth-page/validator.dart';
 import 'package:time_tracker/services/auth.dart';
 import 'package:time_tracker/widget/custom-avatar.dart';
 import 'package:time_tracker/widget/platform-exception-aware-dialog.dart';

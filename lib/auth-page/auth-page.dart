@@ -8,19 +8,25 @@ import 'package:time_tracker/widget/custom-avatar.dart';
 import 'package:time_tracker/widget/platform-exception-aware-dialog.dart';
 import 'package:time_tracker/widget/sign-up-button.dart';
 import 'package:time_tracker/widget/social-button.dart';
-import 'auth-bloc.dart';
+import 'auth-manager.dart';
 
 class AuthPage extends StatelessWidget {
-  AuthPage({@required this.bloc});
-  final AuthBloc bloc;
+  AuthPage({@required this.manager, @required this.isLoading});
+  final AuthManager manager;
+  final bool isLoading;
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context);
-    return Provider<AuthBloc>(
-      create: (_) => AuthBloc(auth: auth),
-      dispose: (_, bloc) => bloc.dispose(),
-      child: Consumer<AuthBloc>(
-        builder: (_, bloc, __) => AuthPage(
-          bloc: bloc,
+    return ChangeNotifierProvider<ValueNotifier<bool>>(
+      create: (_) => ValueNotifier<bool>(false),
+      child: Consumer<ValueNotifier<bool>>(
+        builder: (_, isLoading, __) => Provider<AuthManager>(
+          create: (_) => AuthManager(auth: auth, isLoading: isLoading),
+          child: Consumer<AuthManager>(
+            builder: (_, manager, __) => AuthPage(
+              manager: manager,
+              isLoading: isLoading.value,
+            ),
+          ),
         ),
       ),
     );
@@ -37,7 +43,7 @@ class AuthPage extends StatelessWidget {
 
   Future<void> _signInAnonymously(BuildContext context) async {
     try {
-      await bloc.signInAnonymously();
+      await manager.signInAnonymously();
     } on FirebaseAuthException catch (e) {
       _showSignInError(context, null, e);
     }
@@ -45,7 +51,7 @@ class AuthPage extends StatelessWidget {
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      await bloc.signInWithGoogle();
+      await manager.signInWithGoogle();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e, null);
@@ -55,7 +61,7 @@ class AuthPage extends StatelessWidget {
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
-      await bloc.signInWithFacebook();
+      await manager.signInWithFacebook();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         _showSignInError(context, e, null);
@@ -72,7 +78,6 @@ class AuthPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<AuthBloc>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text("Time Tracker"),
@@ -80,15 +85,8 @@ class AuthPage extends StatelessWidget {
         centerTitle: true,
       ),
       backgroundColor: Colors.purple.withOpacity(0.3),
-      body: StreamBuilder<bool>(
-          stream: bloc.isLoadingStream,
-          initialData: false,
-          builder: (context, snapshot) {
-            bool isLoading = snapshot.data;
-            return isLoading
-                ? _buildProgressHeader()
-                : _buildColumn(context, isLoading);
-          }),
+      body:
+          isLoading ? _buildProgressHeader() : _buildColumn(context, isLoading),
     );
   }
 

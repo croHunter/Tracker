@@ -4,7 +4,9 @@ import 'package:time_tracker/auth-page/email-signin-model.dart';
 import 'package:time_tracker/services/auth.dart';
 
 class EmailSignInBloc {
-  EmailSignInBloc({@required this.auth});
+  EmailSignInBloc({
+    @required this.auth,
+  });
   final AuthBase auth;
 
   StreamController<EmailSignInModel> _modelController =
@@ -24,15 +26,9 @@ class EmailSignInBloc {
       } else {
         await auth.createUserWithEmail(_model.email, _model.password);
       }
-      // Navigator.of(context).pop();
     } catch (e) {
-      debugPrint("FirebaseAuthException :" + e.toString());
       updateWith(isLoading: false);
       rethrow;
-      // PlatformExceptionAwareDialog(
-      //   title: "Sign in failed",
-      //   firebaseAuthException: e,
-      // ).show(context);
     }
   }
 
