@@ -1,4 +1,4 @@
-import '../widget/custom-raised-button.dart';
+import 'custom-raised-button.dart';
 import 'package:flutter/material.dart';
 
 class SignUpButton extends CustomRaisedButton {

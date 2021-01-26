@@ -6,11 +6,14 @@ import 'package:time_tracker/services/auth.dart';
 import 'package:time_tracker/widget/custom-avatar.dart';
 import 'package:time_tracker/widget/platform-exception-aware-dialog.dart';
 import 'package:time_tracker/widget/sign-up-button.dart';
+
 import 'email-signin-change-model.dart';
 
 class EmailSignInFormChangeNotifier extends StatefulWidget {
   EmailSignInFormChangeNotifier({@required this.model});
+
   final EmailSignInChangeModel model;
+
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context);
     return ChangeNotifierProvider<EmailSignInChangeModel>(
@@ -41,11 +44,11 @@ class _EmailSignInFormChangeNotifierState
     try {
       await model.onSubmit();
       Navigator.of(context).pop();
-    } on FirebaseAuthException catch (e) {
-      debugPrint("FirebaseAuthException :" + e.toString());
+    } on FirebaseException catch (e) {
+      debugPrint("FirebaseException :" + e.toString());
       PlatformExceptionAwareDialog(
         title: "Sign in failed",
-        firebaseAuthException: e,
+        firebaseException: e,
       ).show(context);
     }
   }
@@ -108,8 +111,8 @@ class _EmailSignInFormChangeNotifierState
     );
   }
 
-  TextFormField _buildEmailField() {
-    return TextFormField(
+  TextField _buildEmailField() {
+    return TextField(
       controller: _emailController,
       focusNode: _emailFocusNode,
       autocorrect: false,
@@ -145,8 +148,8 @@ class _EmailSignInFormChangeNotifierState
     );
   }
 
-  TextFormField _buildPasswordField() {
-    return TextFormField(
+  TextField _buildPasswordField() {
+    return TextField(
       controller: _passwordController,
       focusNode: _passwordFocusNode,
       keyboardType: TextInputType.visiblePassword,
@@ -162,9 +165,6 @@ class _EmailSignInFormChangeNotifierState
       decoration: InputDecoration(
           suffixIcon: InkWell(
             onTap: () {
-              // setState(() {
-              //   _isVisible = !_isVisible;
-              // });
               model.updateWith(isVisible: !(model.isVisible));
             },
             child: Icon(

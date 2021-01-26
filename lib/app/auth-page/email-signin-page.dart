@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:time_tracker/auth-page/email-signin-form-change-notifier.dart';
+import 'package:time_tracker/app/auth-page/email-signin-form-change-notifier.dart';
 
 class SignInPage extends StatelessWidget {
   @override
