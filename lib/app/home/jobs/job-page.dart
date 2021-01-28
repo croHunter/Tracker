@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:time_tracker/app/home/job_entries/job_entries_page.dart';
 import 'package:time_tracker/app/home/jobs/edit-job-form-page.dart';
 import 'package:time_tracker/app/home/jobs/job-list-tile.dart';
-import 'package:time_tracker/app/home/jobs/list-item-builder.dart';
+import 'package:time_tracker/app/home/jobs/list-items-builder.dart';
 import 'package:time_tracker/app/home/model/job.dart';
 import 'package:time_tracker/services/auth.dart';
 import 'package:time_tracker/services/database.dart';
@@ -58,7 +59,10 @@ class JobPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => EditJobFormPage.show(context),
+        onPressed: () => EditJobFormPage.show(
+          context,
+          database: Provider.of<Database>(context, listen: false),
+        ),
       ),
       body: _buildContent(context),
     );
@@ -69,7 +73,7 @@ class JobPage extends StatelessWidget {
     return StreamBuilder<List<Job>>(
       stream: database.jobsStream(),
       builder: (context, snapshot) {
-        return ListItemBuilder<Job>(
+        return ListItemsBuilder<Job>(
           snapshot: snapshot,
           itemBuilder: (context, job) => Dismissible(
             key: Key('job-${job.id}'),
@@ -80,37 +84,11 @@ class JobPage extends StatelessWidget {
             onDismissed: (direction) => _delete(context, job),
             child: JobListTile(
               job: job,
-              onTap: () => EditJobFormPage.show(context, job: job),
+              onTap: () =>
+                  JobEntriesPage.show(context, database: database, job: job),
             ),
           ),
         );
-        // if (snapshot.hasData) {
-        //   final jobs = snapshot.data;
-        //   if (jobs.isNotEmpty) {
-        //     final children = jobs
-        //             ?.map(
-        //               (job) => JobListTile(
-        //                 job: job,
-        //                 onTap: () => EditJobFormPage.show(context, job: job),
-        //               ),
-        //             )
-        //             ?.toList() ??
-        //         [];
-        //
-        //     return ListView(
-        //       children: children,
-        //     );
-        //   }
-        //   return EmptyContent();
-        // }
-        // if (snapshot.hasError) {
-        //   return Center(
-        //     child: Text('Some error occurred'),
-        //   );
-        // }
-        // return Center(
-        //   child: CircularProgressIndicator(),
-        // );
       },
     );
   }

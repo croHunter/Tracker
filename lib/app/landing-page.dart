@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker/services/auth.dart';
 import 'package:time_tracker/services/database.dart';
+
 import 'auth-page/auth-page.dart';
 import 'home/jobs/job-page.dart';
 
@@ -13,13 +14,15 @@ class LandingPage extends StatelessWidget {
       stream: auth.onAuthStateChange(),
       // ignore: missing_return
       builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
+        if (snapshot.connectionState == ConnectionState.active) {
           FireUser user = snapshot.data;
           if (user == null) {
             return AuthPage.create(context);
           }
           return Provider<Database>(
-              create: (_) => FirebaseDatabase(uid: user.uId), child: JobPage());
+            create: (_) => FirebaseDatabase(uid: user.uId),
+            child: JobPage(),
+          );
         } else {
           return Scaffold(
             body: Center(
