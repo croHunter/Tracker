@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:time_tracker/app/home/job_entries/entry_list_item.dart';
@@ -20,7 +21,9 @@ class JobEntriesPage extends StatelessWidget {
   static Future<void> show(BuildContext context,
       {Database database, Job job}) async {
     await Navigator.of(context).push(
-      MaterialPageRoute(
+      CupertinoPageRoute(
+        //it gives parallax effect
+        //instead of MaterialPageRoute
         fullscreenDialog: false,
         builder: (context) => JobEntriesPage(database: database, job: job),
       ),
@@ -50,25 +53,28 @@ class JobEntriesPage extends StatelessWidget {
               elevation: 2.0,
               title: Text(jobName),
               actions: <Widget>[
-                FlatButton(
-                  child: Text(
-                    'Edit',
-                    style: TextStyle(fontSize: 18.0, color: Colors.white),
+                IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    color: Colors.white,
                   ),
                   onPressed: () => EditJobFormPage.show(context,
                       database: database, job: job),
                 ),
+                IconButton(
+                  icon: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => EntryPage.show(
+                    context: context,
+                    database: database,
+                    job: job,
+                  ),
+                ),
               ],
             ),
             body: _buildContent(context, job),
-            floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () => EntryPage.show(
-                context: context,
-                database: database,
-                job: job,
-              ),
-            ),
           );
         });
   }

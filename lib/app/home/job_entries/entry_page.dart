@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:time_tracker/widget/date_time_picker.dart';
 import 'package:time_tracker/app/home/job_entries/format.dart';
 import 'package:time_tracker/app/home/model/entry.dart';
 import 'package:time_tracker/app/home/model/job.dart';
 import 'package:time_tracker/services/database.dart';
+import 'package:time_tracker/widget/date_time_picker.dart';
 import 'package:time_tracker/widget/platform-exception-aware-dialog.dart';
 
 class EntryPage extends StatefulWidget {
@@ -17,7 +17,7 @@ class EntryPage extends StatefulWidget {
 
   static Future<void> show(
       {BuildContext context, Database database, Job job, Entry entry}) async {
-    await Navigator.of(context).push(
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         builder: (context) =>
             EntryPage(database: database, job: job, entry: entry),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:time_tracker/app/home/home-page.dart';
 import 'package:time_tracker/services/auth.dart';
 import 'package:time_tracker/services/database.dart';
 
 import 'auth-page/auth-page.dart';
-import 'home/jobs/job-page.dart';
 
 class LandingPage extends StatelessWidget {
   @override
@@ -21,7 +21,7 @@ class LandingPage extends StatelessWidget {
           }
           return Provider<Database>(
             create: (_) => FirebaseDatabase(uid: user.uId),
-            child: JobPage(),
+            child: HomePage(),
           );
         } else {
           return Scaffold(
