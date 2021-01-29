@@ -5,19 +5,33 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class FireUser {
+  FireUser({
+    @required this.uId,
+    @required this.photoUrl,
+    @required this.displayName,
+  });
+
   final String uId;
-  FireUser({this.uId});
+  final String photoUrl;
+  final String displayName;
 }
 
 abstract class AuthBase {
   //public interface
   FireUser currentUser();
+
   Future<FireUser> signInAnonymously();
+
   Future<void> signOut();
+
   Stream<FireUser> onAuthStateChange();
+
   Future<FireUser> signInWithGoogle();
+
   Future<FireUser> signInWithFacebook();
+
   Future<FireUser> signInWithEmail(email, password);
+
   Future<FireUser> createUserWithEmail(email, password);
 }
 
@@ -28,7 +42,11 @@ class Auth implements AuthBase {
     if (user == null) {
       return null;
     }
-    return FireUser(uId: user.uid); //instance( i.e object ) of FireUser
+    return FireUser(
+      uId: user.uid,
+      photoUrl: user.photoURL,
+      displayName: user.displayName,
+    ); //instance( i.e object ) of FireUser
   }
 
   @override
