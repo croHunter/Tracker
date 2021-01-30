@@ -25,7 +25,10 @@ class EntryListItem extends StatelessWidget {
             Expanded(
               child: _buildContents(context),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey,),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey,
+            ),
           ],
         ),
       ),
@@ -92,7 +95,18 @@ class DismissibleEntryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      background: Container(color: Colors.red),
+      background: Container(
+        color: Colors.red,
+        child: Center(
+          child: Text(
+            'Delete',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+            ),
+          ),
+        ),
+      ),
       key: key,
       direction: DismissDirection.endToStart,
       onDismissed: (direction) => onDismissed(),

@@ -56,6 +56,15 @@ class JobPage extends StatelessWidget {
             key: Key('job-${job.id}'),
             background: Container(
               color: Colors.red,
+              child: Center(
+                child: Text(
+                  'Delete',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
             ),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) => _delete(context, job),

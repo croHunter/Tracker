@@ -9,11 +9,13 @@ class FireUser {
     @required this.uId,
     @required this.photoUrl,
     @required this.displayName,
+    @required this.email,
   });
 
   final String uId;
   final String photoUrl;
   final String displayName;
+  final String email;
 }
 
 abstract class AuthBase {
@@ -46,6 +48,7 @@ class Auth implements AuthBase {
       uId: user.uid,
       photoUrl: user.photoURL,
       displayName: user.displayName,
+      email: user.email,
     ); //instance( i.e object ) of FireUser
   }
 

@@ -39,7 +39,7 @@ class AccountPage extends StatelessWidget {
           )
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(130),
+          preferredSize: Size.fromHeight(140),
           child: _buildUserInfo(user),
         ),
       ),
@@ -59,6 +59,14 @@ class AccountPage extends StatelessWidget {
         if (user.displayName != null)
           Text(
             user.displayName,
+            style: TextStyle(color: Colors.white),
+          ),
+        SizedBox(
+          height: 8,
+        ),
+        if (user.email != null)
+          Text(
+            user.email,
             style: TextStyle(color: Colors.white),
           ),
         SizedBox(

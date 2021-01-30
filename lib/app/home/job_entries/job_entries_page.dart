@@ -74,12 +74,12 @@ class JobEntriesPage extends StatelessWidget {
                 ),
               ],
             ),
-            body: _buildContent(context, job),
+            body: _buildContent(context),
           );
         });
   }
 
-  Widget _buildContent(BuildContext context, Job job) {
+  Widget _buildContent(BuildContext context) {
     return StreamBuilder<List<Entry>>(
       stream: database.entriesStream(job: job),
       builder: (context, snapshot) {
